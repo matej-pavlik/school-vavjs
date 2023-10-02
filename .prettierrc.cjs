@@ -1,6 +1,4 @@
-const config = {
+module.exports = {
     tabWidth: 4,
     singleQuote: true,
 };
-
-module.exports = config;
