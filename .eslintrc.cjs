@@ -11,4 +11,8 @@ module.exports = {
         sourceType: 'module',
     },
     plugins: ['react'],
+    rules: {
+        strict: ['off', 'safe'],
+        'no-inner-declarations': ['off'],
+    },
 };
