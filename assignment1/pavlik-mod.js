@@ -187,6 +187,9 @@
     function downcount(secs) {
         document.querySelector('#downcount').innerHTML = secs;
 
+        // Only allow one timer at a time
+        clearTimeout(downcountTimeout);
+
         if (secs === window.downcounter) {
             score.textContent = Number(score.textContent) + 1;
         } else if (secs === 'FAILED') {
@@ -204,8 +207,6 @@
     function initReset() {
         const btn = createButton('Reset game', () => {
             debugMessage('Resetting game');
-
-            clearTimeout(downcountTimeout);
 
             window.reset();
             renderGrid();
