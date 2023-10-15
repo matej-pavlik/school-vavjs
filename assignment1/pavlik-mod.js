@@ -10,8 +10,6 @@
 
 'use strict';
 
-// TODO! find what causes a bug where the game goes crazy (maybe setTimeout should be cleared always in downcount()?)
-
 {
     // These are actual computed css cell sizes
     const CELL_WIDTH = 12.8; // 10
