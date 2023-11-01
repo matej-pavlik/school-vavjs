@@ -1,4 +1,14 @@
 {
     "cSpell.language": "en,sk,cs",
-    "cSpell.words": ["Bronis", "coursor", "Downcount", "downcounter", "unrender", "Unrendering", "vavjs"]
+    "cSpell.words": [
+        "Bronis",
+        "coursor",
+        "Downcount",
+        "downcounter",
+        "Proxify",
+        "unrender",
+        "Unrendering",
+        "vavjs",
+        "vnode"
+    ]
 }
