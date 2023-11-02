@@ -14,5 +14,6 @@ module.exports = {
     rules: {
         strict: ['off', 'safe'],
         'no-inner-declarations': ['off'],
+        'prefer-rest-params': ['off'],
     },
 };
