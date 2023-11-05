@@ -12,8 +12,12 @@ module.exports = {
     },
     plugins: ['react'],
     rules: {
-        strict: ['off', 'safe'],
+        strict: ['off'],
+        'import/extensions': ['off'],
+        'max-classes-per-file': ['off'],
         'no-inner-declarations': ['off'],
+        'no-return-assign': ['error', 'except-parens'],
+        'no-underscore-dangle': ['off'],
         'prefer-rest-params': ['off'],
     },
 };

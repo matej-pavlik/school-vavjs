@@ -9,17 +9,18 @@ function extractEntries(obj, callbackFilter) {
     return Object.entries(obj).filter(([key, value]) => callbackFilter(key, value));
 }
 
-function getAllowedAttrs(tag) {
-    const ALLOWED_ATTRS = {
-        all: ['class', 'id'],
-        input: ['placeholder'],
+function getAllowedProperties(tag) {
+    const ALLOWED_PROPERTIES = {
+        all: ['className', 'id'],
+        button: ['disabled'],
+        input: ['autocomplete', 'placeholder', 'type', 'value'],
     };
 
-    return ALLOWED_ATTRS.all.concat(ALLOWED_ATTRS[tag] ?? []);
+    return ALLOWED_PROPERTIES.all.concat(ALLOWED_PROPERTIES[tag] ?? []);
 }
 
 function deepProxify(initialObj, onChange = () => {}) {
-    const target = { ...initialObj, $isProxy: true };
+    const target = { ...initialObj, __isProxy: true };
     Object.entries(initialObj).forEach(([key, value]) => {
         if (value != null && typeof value === 'object') {
             target[key] = deepProxify(value, onChange);
@@ -30,7 +31,7 @@ function deepProxify(initialObj, onChange = () => {}) {
         set(targetObj, prop, value) {
             const prevValue = Reflect.get(...arguments);
 
-            if (prevValue !== value && value != null && typeof value === 'object' && !value.$isProxy) {
+            if (prevValue !== value && value != null && typeof value === 'object' && !value.__isProxy) {
                 Reflect.set(targetObj, prop, deepProxify(value, onChange));
                 onChange(prevValue, value);
             } else if (prevValue !== value) {
@@ -57,22 +58,18 @@ function deepProxify(initialObj, onChange = () => {}) {
 }
 
 function createComponentContext(vnode) {
-    function $useSignal(initialValue) {
-        // eslint-disable-next-line no-use-before-define
-        return deepProxify({ value: initialValue }, () => rerender(vnode));
-    }
-
-    function $useStore(initialValue) {
-        if (typeof initialValue !== 'object' || initialValue == null) {
-            throw Error('useStore initialValue must be an object');
-        }
-        // eslint-disable-next-line no-use-before-define
-        return deepProxify(initialValue, () => rerender(vnode));
-    }
-
     return {
-        useSignal: $useSignal,
-        useStore: $useStore,
+        useSignal(initialValue) {
+            // eslint-disable-next-line no-use-before-define
+            return deepProxify({ value: initialValue }, () => rerender(vnode));
+        },
+        useStore(initialValue) {
+            if (typeof initialValue !== 'object' || initialValue == null) {
+                throw Error('useStore initialValue must be an object');
+            }
+            // eslint-disable-next-line no-use-before-define
+            return deepProxify(initialValue, () => rerender(vnode));
+        },
     };
 }
 
@@ -101,17 +98,17 @@ function render(vnode) {
     vnodeMap.set(vnode, { elem });
 
     const isListener = (key) => key.startsWith('on');
-    const isAttribute = (key) => getAllowedAttrs(type).includes(key);
+    const isProperty = (key) => getAllowedProperties(type).includes(key);
     extractEntries(props, isListener).forEach(([eventProp, callback]) =>
         elem.addEventListener(eventProp.substring(2).toLowerCase(), callback),
     );
-    extractEntries(props, isAttribute).forEach(([attr, value]) => {
-        elem.setAttribute(attr, value);
+    extractEntries(props, isProperty).forEach(([prop, value]) => {
+        elem[prop] = value;
     });
 
     children.forEach((child) => {
         if (typeof child !== 'object' || child == null) {
-            elem.append(child); // Append as a text node
+            elem.append(child != null ? child : ''); // Append as a text node
         } else {
             elem.append(render(child));
         }
@@ -135,11 +132,17 @@ export function h({ type, props = {}, children = [] }) {
     return { type, props, children: Array.isArray(children) ? children : [children] };
 }
 
-export function createApp(rootVnode, { id = 'app' } = {}) {
+export function createApp({ id = 'app' } = {}) {
     const rootElem = document.createElement('div');
     rootElem.id = id;
     document.body.prepend(rootElem);
-    rootElem.append(render(rootVnode));
+
+    function renderPage(PageComponent, { props } = {}) {
+        // TODO clean up side effects (maybe not exactly here)
+        rootElem.replaceChildren(render(h({ type: PageComponent, props })));
+    }
+
+    return { renderPage };
 }
 
 export function useSignal(initialValue) {
