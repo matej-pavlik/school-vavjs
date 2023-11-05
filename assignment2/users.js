@@ -11,7 +11,7 @@ export function getUserBy(property, value, { withSensitiveData = false } = {}) {
             throw new Error(`Invalid user property '${property}'`);
         }
 
-        return u[property] === value;
+        return u[property] === (property === 'email' ? value.toLowerCase() : value);
     });
 
     if (!user) {
@@ -22,24 +22,32 @@ export function getUserBy(property, value, { withSensitiveData = false } = {}) {
         return user;
     }
 
-    const { id, token, isAdmin, email, username } = user;
-    return { id, token, isAdmin, email, username };
+    const { id, token, isAdmin, isGuest, email, username } = user;
+    return { id, token, isAdmin, isGuest, email, username };
 }
 
 export function getUserByLogin(login, { withSensitiveData = false } = {}) {
     return (
-        getUserBy('email', login, { withSensitiveData }) ||
+        getUserBy('email', login.toLowerCase(), { withSensitiveData }) ||
         getUserBy('username', login, { withSensitiveData })
     );
 }
 
-export async function createUser({ email, username, password, isAdmin = false }) {
+export async function createUser({ email, username, password, isAdmin = false, isGuest = false }) {
     const id = randomUUID();
     const token = (await promisify(randomBytes)(256)).toString('hex');
-    const passwordSalt = (await promisify(randomBytes)(16)).toString('hex');
-    const passwordHash = await hashPassword(password, passwordSalt);
+    const passwordSalt = isGuest ? null : (await promisify(randomBytes)(16)).toString('hex');
+    const passwordHash = isGuest ? null : await hashPassword(password, passwordSalt);
 
-    users.push({ id, token, isAdmin, email, username, passwordHash, passwordSalt });
+    users.push({
+        id,
+        token,
+        isAdmin,
+        email: email?.toLowerCase() ?? null, // null if guest
+        username: username ?? null, // null if guest
+        passwordHash,
+        passwordSalt,
+    });
 
     return getUserBy('id', id);
 }

@@ -24,7 +24,7 @@ function validateCreateUserRequest({ email, username, password, passwordConfirma
     if (!emailRegex.test(email)) {
         throw new ValidationError('Invalid email');
     }
-    if (getUserBy('email', email)) {
+    if (getUserBy('email', email.toLowerCase())) {
         throw new ValidationError('Email already exists');
     }
     if (!usernameRegex.test(username)) {
@@ -43,21 +43,31 @@ function validateCreateUserRequest({ email, username, password, passwordConfirma
 
 app.post('/login', (req, res, next) => {
     const { login, password } = req.body;
-    [login, password].forEach((val) => {
-        if (typeof val !== 'string') {
-            throw new ValidationError('Invalid or incomplete request');
-        }
-    });
 
-    async function authenticateUser(user) {
-        if (!user || user.passwordHash !== (await hashPassword(password, user.passwordSalt))) {
+    async function asyncHandler() {
+        // Guest user
+        if (login === 'N/A' || login === '[N/A]') {
+            res.send(await createUser({ isGuest: true }));
+            return;
+        }
+
+        // eslint-disable-next-line no-restricted-syntax
+        [login, password].forEach((val) => {
+            if (typeof val !== 'string') {
+                throw new ValidationError('Invalid or incomplete request');
+            }
+        });
+
+        const $user = getUserByLogin(login, { withSensitiveData: true });
+        if (!$user || $user.passwordHash !== (await hashPassword(password, $user.passwordSalt))) {
             throw new AuthenticationError('Invalid credentials');
         }
+
+        res.send(getUserByLogin(login));
     }
 
-    authenticateUser(getUserByLogin(login, { withSensitiveData: true }))
-        .then(() => res.send(getUserByLogin(login)))
-        .catch((err) => next(err));
+    // Express (v4) doesn't catch async errors, so we need to pass them manually with next()
+    asyncHandler().catch((err) => next(err));
 });
 
 app.post('/register', (req, res, next) => {
