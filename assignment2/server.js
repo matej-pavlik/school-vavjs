@@ -1,16 +1,36 @@
 // Matej Pavlík
 import express from 'express';
+import { WebSocketServer } from 'ws';
 import { hashPassword } from './security.js';
-import { createUser, getUserBy, getUserByLogin } from './users.js';
+import { createUser, getGameBy, getUserBy, getUserByLogin } from './users.js';
 
 class AuthenticationError extends Error {}
+class AuthorizationError extends Error {}
 class ValidationError extends Error {}
 
 const PORT = 8080;
 const app = express();
 
+const WS_PORT = 8082;
+const WS_PING_INTERVAL = 30000;
+const wss = new WebSocketServer({ port: WS_PORT });
+
 app.use(express.static('public'));
 app.use(express.json());
+app.use('/game/:controlToken', (req, res, next) => {
+    const { controlToken } = req.params;
+
+    if (!controlToken) {
+        throw new ValidationError('Invalid or incomplete request');
+    }
+
+    const game = getGameBy('controlToken', controlToken);
+    if (!game) {
+        throw new AuthorizationError('Insufficient rights');
+    }
+
+    next();
+});
 
 function validateCreateUserRequest({ email, username, password, passwordConfirmation }) {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i; // Source: https://www.regular-expressions.info/email.html
@@ -18,7 +38,7 @@ function validateCreateUserRequest({ email, username, password, passwordConfirma
 
     [email, username, password, passwordConfirmation].forEach((val) => {
         if (typeof val !== 'string') {
-            throw new ValidationError('Invalid or incomplete request');
+            throw new ValidationError('Invalid request');
         }
     });
     if (!emailRegex.test(email)) {
@@ -79,6 +99,30 @@ app.post('/register', (req, res, next) => {
         .catch((err) => next(err));
 });
 
+app.put('/game/:controlToken', (req, res) => {
+    const { controlToken } = req.params;
+    const { type } = req.body;
+
+    if (!['ENTER', 'UP', 'DOWN', 'LEFT', 'RIGHT'].includes(type)) {
+        throw new ValidationError('Invalid request');
+    }
+
+    getGameBy('controlToken', controlToken).sendEvent({ type });
+    res.send({ success: true });
+});
+
+app.put('/game/:controlToken/image', (req, res) => {
+    const { controlToken } = req.params;
+    const { type } = req.body;
+
+    if (!['RED', 'ORANGE'].includes(type)) {
+        throw new ValidationError('Invalid request');
+    }
+
+    getGameBy('controlToken', controlToken).changeTrainImage({ type });
+    res.send({ success: true });
+});
+
 // Error handling middleware
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
@@ -93,4 +137,44 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
+});
+
+wss.on('listening', () => {
+    console.log(`WebSocket server listening on port ${WS_PORT}`);
+});
+
+wss.on('connection', (ws, req) => {
+    let isAlive = true;
+
+    const params = new URLSearchParams(req.url.split('?')[1]);
+    const gameId = params.get('gameId');
+
+    const game = getGameBy('id', gameId);
+
+    if (!game) {
+        ws.close();
+        return;
+    }
+
+    game.addConnection(ws);
+
+    const interval = setInterval(() => {
+        if (isAlive) {
+            isAlive = false;
+            ws.ping();
+        } else {
+            ws.terminate();
+        }
+    }, WS_PING_INTERVAL);
+
+    function onClose() {
+        clearInterval(interval);
+        game.removeConnection(ws);
+    }
+
+    ws.on('error', onClose);
+    ws.on('close', onClose);
+    ws.on('pong', () => {
+        isAlive = true;
+    });
 });

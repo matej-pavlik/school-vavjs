@@ -14,6 +14,7 @@ function getAllowedProperties(tag) {
         all: ['className', 'id'],
         button: ['disabled'],
         input: ['autocomplete', 'placeholder', 'type', 'value'],
+        option: ['value'],
     };
 
     return ALLOWED_PROPERTIES.all.concat(ALLOWED_PROPERTIES[tag] ?? []);
@@ -58,7 +59,12 @@ function deepProxify(initialObj, onChange = () => {}) {
 }
 
 function createComponentContext(vnode) {
+    const mountedCallbacks = [];
+
     return {
+        onMounted(callback) {
+            mountedCallbacks.push(callback);
+        },
         useSignal(initialValue) {
             // eslint-disable-next-line no-use-before-define
             return deepProxify({ value: initialValue }, () => rerender(vnode));
@@ -69,6 +75,9 @@ function createComponentContext(vnode) {
             }
             // eslint-disable-next-line no-use-before-define
             return deepProxify(initialValue, () => rerender(vnode));
+        },
+        __runMountedCallbacks(elem) {
+            mountedCallbacks.forEach((callback) => callback(elem));
         },
     };
 }
@@ -86,6 +95,7 @@ function render(vnode) {
         currentContext = createComponentContext(vnode);
         const vnodeFn = type({ props, children });
         const elem = render(vnodeFn());
+        currentContext.__runMountedCallbacks(elem);
         currentContext = previousHookContext;
 
         vnodeMap.set(vnode, { elem, vnodeFn });
@@ -138,11 +148,14 @@ export function createApp({ id = 'app' } = {}) {
     document.body.prepend(rootElem);
 
     function renderPage(PageComponent, { props } = {}) {
-        // TODO clean up side effects (maybe not exactly here)
         rootElem.replaceChildren(render(h({ type: PageComponent, props })));
     }
 
     return { renderPage };
+}
+
+export function onMounted(callback) {
+    currentContext.onMounted(callback);
 }
 
 export function useSignal(initialValue) {

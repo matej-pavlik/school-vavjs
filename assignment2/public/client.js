@@ -4,7 +4,7 @@
 'use strict';
 
 (async () => {
-    const { createApp, h, useSignal } = await import('./clientLibrary.js');
+    const { createApp, h, onMounted, useSignal } = await import('./clientLibrary.js');
 
     async function addStyles() {
         const sheet = new CSSStyleSheet();
@@ -75,6 +75,17 @@
             });
     }
 
+    function InfoComponent({ props: { label, value, id, type = null } }) {
+        return () =>
+            h({
+                type: type ?? 'div',
+                children: [
+                    h({ type: 'span', children: `${label}: ` }),
+                    h({ type: 'span', props: { id }, children: value }),
+                ],
+            });
+    }
+
     function LoginPage() {
         const form = { login: null, password: null };
         const { isLoading, data, errorMsg, execute } = useFetch('/login');
@@ -111,7 +122,7 @@
                             onClick: async () => {
                                 await execute({ method: 'POST', body: form });
                                 if (!errorMsg.value) {
-                                    app.renderPage(UserPage, { props: data.value });
+                                    app.renderPage(GamePage, { props: { user: data.value } });
                                 }
                             },
                         },
@@ -179,7 +190,7 @@
                             onClick: async () => {
                                 await execute({ method: 'POST', body: form });
                                 if (!errorMsg.value) {
-                                    app.renderPage(UserPage, { props: data.value });
+                                    app.renderPage(GamePage, { props: { user: data.value } });
                                 }
                             },
                         },
@@ -194,16 +205,175 @@
             });
     }
 
-    function UserPage({ props }) {
+    function GamePage({ props: { user } }) {
+        let socket = null;
+        let changeTrainImage = null;
+
+        function sendEvent(type) {
+            fetch(`/game/${user.game.controlToken}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type }),
+            });
+        }
+
+        function keyboardListener({ code }) {
+            // Blurs focused buttons so that when pressing enter, it doesn't trigger button click event
+            document.activeElement.blur();
+
+            if (code === 'Enter') {
+                sendEvent('ENTER');
+            } else if (code === 'KeyW' || code === 'ArrowUp') {
+                sendEvent('UP');
+            } else if (code === 'KeyS' || code === 'ArrowDown') {
+                sendEvent('DOWN');
+            } else if (code === 'KeyA' || code === 'ArrowLeft') {
+                sendEvent('LEFT');
+            } else if (code === 'KeyD' || code === 'ArrowRight') {
+                sendEvent('RIGHT');
+            }
+        }
+
+        window.addEventListener('keydown', keyboardListener);
+
+        onMounted((elem) => {
+            const GAME_WIDTH = 80;
+            const GAME_HEIGHT = 40;
+            const CELL_WIDTH = 12.8;
+            const CELL_HEIGHT = 9.8;
+
+            const canvas = elem.querySelector('canvas');
+            const ctx = canvas.getContext('2d', { alpha: false });
+
+            canvas.width = GAME_WIDTH * CELL_WIDTH;
+            canvas.height = GAME_HEIGHT * CELL_HEIGHT;
+
+            const imagesCache = {};
+
+            function loadImage(src) {
+                const img = new Image();
+
+                return {
+                    img,
+                    promise: new Promise((resolve, reject) => {
+                        img.onload = () => resolve(img);
+                        img.onerror = reject;
+                        img.src = src;
+                    }),
+                };
+            }
+
+            async function getImage(imageUrl) {
+                if (imagesCache[imageUrl]) {
+                    return imagesCache[imageUrl].img;
+                }
+
+                const image = loadImage(imageUrl);
+                imagesCache[imageUrl] = image;
+                await image.promise;
+                return image.img;
+            }
+
+            async function renderCells(cells) {
+                await getImage(cells[0].image);
+
+                const loadedCells = await Promise.all(
+                    cells.map(async ({ x, y, image: imageUrl }) => ({
+                        x,
+                        y,
+                        image: await getImage(imageUrl),
+                    })),
+                );
+
+                loadedCells.forEach(({ x, y, image }) => {
+                    ctx.drawImage(image, x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
+                });
+            }
+
+            function updateInfo({ count, speed, bestSpeed, score, bestScore }) {
+                elem.querySelector('#count').textContent = count;
+                elem.querySelector('#speed').textContent = speed;
+                elem.querySelector('#score').textContent = score;
+                elem.querySelector('#best-speed').textContent = bestSpeed;
+                elem.querySelector('#best-score').textContent = bestScore;
+            }
+
+            function changeTrainFn() {
+                const type = elem.querySelector('#select').value;
+
+                if (!type) {
+                    return;
+                }
+
+                fetch(`/game/${user.game.controlToken}/image`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type }),
+                });
+            }
+
+            changeTrainImage = changeTrainFn;
+
+            socket = new WebSocket(`ws://localhost:8082?gameId=${user.game.id}`);
+            socket.addEventListener('message', async (messageEvent) => {
+                const { event, data } = JSON.parse(messageEvent.data);
+
+                if (event === 'GAME_CELLS_UPDATE') {
+                    await renderCells(data);
+                } else if (event === 'GAME_INFO_UPDATE') {
+                    updateInfo(data);
+                }
+            });
+        });
+
         return () =>
             h({
                 type: 'div',
+                props: { className: 'column' },
                 children: [
-                    JSON.stringify(props),
+                    h({ type: 'h1', children: 'Game' }),
+                    h({ type: 'canvas' }),
+                    h({
+                        type: InfoComponent,
+                        props: { label: 'Count', value: '5', id: 'count', type: 'h2' },
+                    }),
+                    h({ type: InfoComponent, props: { label: 'Speed', value: '1000', id: 'speed' } }),
+                    h({ type: InfoComponent, props: { label: 'Score', value: '0', id: 'score' } }),
+                    h({
+                        type: InfoComponent,
+                        props: { label: 'Best speed', value: user.game.bestSpeed, id: 'best-speed' },
+                    }),
+                    h({
+                        type: InfoComponent,
+                        props: { label: 'Best score', value: user.game.bestScore, id: 'best-score' },
+                    }),
+                    h({
+                        type: 'div',
+                        children: [
+                            h({
+                                type: 'select',
+                                props: { id: 'select' },
+                                children: [
+                                    h({ type: 'option', props: { value: '' }, children: 'Choose image' }),
+                                    h({ type: 'option', props: { value: 'RED' }, children: 'Red' }),
+                                    h({ type: 'option', props: { value: 'ORANGE' }, children: 'Orange' }),
+                                ],
+                            }),
+                            h({
+                                type: 'button',
+                                props: {
+                                    onClick: () => changeTrainImage?.(),
+                                },
+                                children: 'Change train image',
+                            }),
+                        ],
+                    }),
                     h({
                         type: 'button',
                         props: {
                             onClick: () => {
+                                socket?.close();
+                                window.removeEventListener('keydown', keyboardListener);
                                 app.renderPage(LoginPage);
                             },
                         },

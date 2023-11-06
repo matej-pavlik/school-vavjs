@@ -17,6 +17,7 @@ module.exports = {
         'max-classes-per-file': ['off'],
         'no-inner-declarations': ['off'],
         'no-return-assign': ['error', 'except-parens'],
+        'no-return-await': ['off'],
         'no-underscore-dangle': ['off'],
         'prefer-rest-params': ['off'],
     },

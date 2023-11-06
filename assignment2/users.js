@@ -1,7 +1,7 @@
 // Matej Pavlík
-import { randomBytes, randomUUID } from 'node:crypto';
-import { promisify } from 'node:util';
-import { hashPassword } from './security.js';
+import { randomUUID } from 'node:crypto';
+import { createGame } from './game.js';
+import { generateSalt, generateToken, hashPassword } from './security.js';
 
 const users = [];
 
@@ -23,7 +23,8 @@ export function getUserBy(property, value, { withSensitiveData = false } = {}) {
     }
 
     const { id, token, isAdmin, isGuest, email, username } = user;
-    return { id, token, isAdmin, isGuest, email, username };
+    const { isActive, addConnection, removeConnection, sendEvent, ...game } = user.game;
+    return { id, token, isAdmin, isGuest, email, username, game };
 }
 
 export function getUserByLogin(login, { withSensitiveData = false } = {}) {
@@ -33,10 +34,22 @@ export function getUserByLogin(login, { withSensitiveData = false } = {}) {
     );
 }
 
+export function getGameBy(property, value) {
+    return (
+        users.find((u) => {
+            if (!Object.hasOwn(u.game, property)) {
+                throw new Error(`Invalid game property '${property}'`);
+            }
+
+            return u.game[property] === value;
+        })?.game ?? null
+    );
+}
+
 export async function createUser({ email, username, password, isAdmin = false, isGuest = false }) {
     const id = randomUUID();
-    const token = (await promisify(randomBytes)(256)).toString('hex');
-    const passwordSalt = isGuest ? null : (await promisify(randomBytes)(16)).toString('hex');
+    const token = await generateToken();
+    const passwordSalt = isGuest ? null : await generateSalt();
     const passwordHash = isGuest ? null : await hashPassword(password, passwordSalt);
 
     users.push({
@@ -47,6 +60,7 @@ export async function createUser({ email, username, password, isAdmin = false, i
         username: username ?? null, // null if guest
         passwordHash,
         passwordSalt,
+        game: await createGame(),
     });
 
     return getUserBy('id', id);
