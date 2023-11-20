@@ -5,20 +5,23 @@ module.exports = {
         node: true,
     },
     extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
-    overrides: [],
+    overrides: [
+        {
+            files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+            extends: ['plugin:testing-library/react'],
+        },
+    ],
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
     },
     plugins: ['react'],
     rules: {
-        strict: ['off'],
         'import/extensions': ['off'],
-        'max-classes-per-file': ['off'],
-        'no-inner-declarations': ['off'],
+        'import/no-extraneous-dependencies': ['off'],
+        'import/prefer-default-export': ['off'],
         'no-return-assign': ['error', 'except-parens'],
-        'no-return-await': ['off'],
-        'no-underscore-dangle': ['off'],
-        'prefer-rest-params': ['off'],
+        'react/jsx-uses-react': 'off',
+        'react/react-in-jsx-scope': 'off',
     },
 };
