@@ -12,8 +12,7 @@ const dataSource = new DataSource({
   entities: [userSchema],
 });
 
-await dataSource.initialize();
-
-export const db = {
+export default {
   user: dataSource.getRepository(userSchema),
+  initialize: () => dataSource.initialize(),
 };
