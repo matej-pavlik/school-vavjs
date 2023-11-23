@@ -2,6 +2,6 @@ import { Router } from 'express';
 
 const router = Router();
 
-// router.get("/", (req, res) => {
+// router.get('/', async (req, res) => {});
 
 export const apiRouter = router;
