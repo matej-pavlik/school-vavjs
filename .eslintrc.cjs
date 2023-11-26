@@ -23,5 +23,6 @@ module.exports = {
         'no-return-assign': ['error', 'except-parens'],
         'react/jsx-uses-react': 'off',
         'react/react-in-jsx-scope': 'off',
+        'max-classes-per-file': 'off',
     },
 };

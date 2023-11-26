@@ -1,4 +1,5 @@
 import express from 'express';
+import { errorMiddleware } from './middlewares/error.js';
 import { apiRouter } from './routers/api.js';
 import { guestRouter } from './routers/guest.js';
 
@@ -9,5 +10,7 @@ app.use(express.json());
 
 app.use('/', guestRouter);
 app.use('/api', apiRouter); // TODO protect middleware
+
+app.use(errorMiddleware);
 
 export default app;
