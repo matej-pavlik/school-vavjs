@@ -5,3 +5,4 @@ coverage
 dist
 .env
 !assignment3/.env
+!assignment3/frontend/.env

@@ -1,6 +1,6 @@
 import { getUserToken } from '@/state';
 
-export async function fetchData(url, { method = 'GET', body }) {
+export async function fetchData(url, { method = 'GET', body } = {}) {
   const realUrl = `${import.meta.env.VITE_API_URL}/${url}`;
   const userToken = getUserToken();
 

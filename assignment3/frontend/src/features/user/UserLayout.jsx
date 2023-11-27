@@ -15,15 +15,11 @@ export default function UserLayout() {
       label: 'Rides',
       to: '/user/rides',
     },
-    {
-      label: 'Ride types',
-      to: '/user/ride-types',
-    },
   ];
 
   return (
     <Stack direction="row" sx={{ height: '100%' }}>
-      <Sheet variant="outlined" sx={{ maxWidth: 300, flex: 1, minWidth: 0 }}>
+      <Sheet variant="outlined" sx={{ minWidth: 300 }}>
         <Typography level="title-md" sx={{ pt: 1.5, pb: 1, px: 2, textAlign: 'center' }}>
           {user.email}
         </Typography>

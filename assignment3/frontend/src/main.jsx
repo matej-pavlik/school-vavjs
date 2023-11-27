@@ -19,9 +19,6 @@ const theme = extendTheme({
 
 const router = createBrowserRouter(routesConfig);
 
-// TODO remove
-console.log(import.meta.env.VITE_API_URL);
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CssVarsProvider theme={theme}>

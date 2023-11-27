@@ -5,6 +5,8 @@ import Register from './features/register/Register';
 import { registerRouteHandlers } from './features/register/Register.route';
 import UserLayout from './features/user/UserLayout';
 import { userLayoutRouteHandlers } from './features/user/UserLayout.route';
+import UserRideCreate from './features/user/UserRideCreate';
+import { userRideCreateRouteHandlers } from './features/user/UserRideCreate.route';
 import UserRides from './features/user/UserRides';
 import { userRidesRouteHandlers } from './features/user/UserRides.route';
 
@@ -36,6 +38,11 @@ export const routesConfig = [
         path: 'rides',
         element: <UserRides />,
         ...userRidesRouteHandlers,
+      },
+      {
+        path: 'rides/create',
+        element: <UserRideCreate />,
+        ...userRideCreateRouteHandlers,
       },
     ],
   },
