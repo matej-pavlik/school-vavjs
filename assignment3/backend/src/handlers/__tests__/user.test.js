@@ -49,12 +49,14 @@ describe('createUser()', () => {
     const nextSpy = sinon.spy();
     const expectedError = expect.any(ValidationError);
     const expectedMsg = 'Email already exists';
+    const expectedMetadata = { pathScope: 'BODY', path: ['email'] };
 
     await createUser(initialReq, initialRes, () => {});
     await createUser(req, res, nextSpy);
 
     expect(nextSpy.args).toEqual([[expectedError]]);
     expect(nextSpy.args[0][0].message).toEqual(expectedMsg);
+    expect(nextSpy.args[0][0].metadata).toEqual(expectedMetadata);
     expect(jsonSpy.notCalled).toEqual(true);
   });
 
@@ -66,12 +68,14 @@ describe('createUser()', () => {
     const nextSpy = sinon.spy();
     const expectedError = expect.any(ValidationError);
     const expectedMsg = 'Username already exists';
+    const expectedMetadata = { pathScope: 'BODY', path: ['username'] };
 
     await createUser(initialReq, initialRes, () => {});
     await createUser(req, res, nextSpy);
 
     expect(nextSpy.args).toEqual([[expectedError]]);
     expect(nextSpy.args[0][0].message).toEqual(expectedMsg);
+    expect(nextSpy.args[0][0].metadata).toEqual(expectedMetadata);
     expect(jsonSpy.notCalled).toEqual(true);
   });
 });

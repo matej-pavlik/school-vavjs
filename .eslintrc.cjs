@@ -19,6 +19,7 @@ module.exports = {
     rules: {
         'import/extensions': ['off'],
         'import/no-extraneous-dependencies': ['off'],
+        'import/no-unresolved': ['off'],
         'import/prefer-default-export': ['off'],
         'no-return-assign': ['error', 'except-parens'],
         'react/jsx-uses-react': 'off',

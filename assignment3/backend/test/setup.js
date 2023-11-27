@@ -13,6 +13,7 @@ let transactionalContext;
 export const mochaHooks = {
   async beforeEach() {
     connection = await db.initialize();
+    await db.seed();
     transactionalContext = new TransactionalTestContext(connection);
     await transactionalContext.start();
   },
