@@ -5,7 +5,7 @@ export async function protectMiddleware(req, res, next) {
   const bearer = req.headers.authorization;
 
   if (!bearer || !bearer.startsWith('Bearer ')) {
-    next(AuthenticationError());
+    next(new AuthenticationError());
     return;
   }
 
@@ -18,6 +18,6 @@ export async function protectMiddleware(req, res, next) {
       next();
     })
     .catch(() => {
-      next(AuthenticationError());
+      next(new AuthenticationError());
     });
 }

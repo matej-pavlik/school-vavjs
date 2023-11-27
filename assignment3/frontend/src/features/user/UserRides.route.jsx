@@ -1,6 +1,7 @@
+import { fetchData } from '../common/helperFetch';
+
 export const userRidesRouteHandlers = {
-  loader() {
-    // TODO
-    return null;
+  async loader() {
+    return fetchData('api/rides');
   },
 };
