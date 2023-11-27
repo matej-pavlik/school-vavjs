@@ -3,5 +3,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   test: { environment: 'jsdom', setupFiles: './test/setup.js' },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@test': '/test',
+    },
+  },
   plugins: [react()],
 });

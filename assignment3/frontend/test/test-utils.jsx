@@ -1,14 +1,30 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-function RootProvider({ children }) {
-  return children;
+function customRender(ui, options = {}) {
+  return {
+    user: userEvent.setup(),
+    ...render(ui, {
+      ...options,
+    }),
+  };
 }
 
-const customRender = (ui, options) => ({
-  user: userEvent.setup(),
-  ...render(ui, { wrapper: RootProvider, ...options }),
-});
+function renderWithRouter(ui, route = {}, options = {}) {
+  const router = createMemoryRouter(
+    [
+      {
+        element: ui,
+        action: () => null,
+        ...route, // route.path is required
+      },
+    ],
+    { initialEntries: [route.path] },
+  );
+
+  return customRender(<RouterProvider router={router} />, options);
+}
 
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, renderWithRouter };

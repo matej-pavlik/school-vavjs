@@ -7,11 +7,11 @@ export async function createUser(req, res, next) {
   const { email, username, password, age } = req.body;
 
   if (await db.user.findOneBy({ email })) {
-    next(new ValidationError('Email already exists'));
+    next(new ValidationError('Email already exists', { path: 'email' }));
     return;
   }
   if (await db.user.findOneBy({ username })) {
-    next(new ValidationError('Username already exists'));
+    next(new ValidationError('Username already exists', { path: 'username' }));
     return;
   }
 
