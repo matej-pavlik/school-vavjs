@@ -34,6 +34,7 @@ describe('createUser()', () => {
       email: 'example@example.com',
       username: 'example000',
       age: 24,
+      createdAt: expect.any(Date),
     };
 
     await createUser(req, res, () => {});
@@ -109,6 +110,7 @@ describe('loginUser()', () => {
       email: 'example@example.com',
       username: 'example000',
       age: 24,
+      createdAt: expect.any(Date),
     };
 
     await loginUser(req, res, () => {});
@@ -130,6 +132,7 @@ describe('loginUser()', () => {
       email: 'example@example.com',
       username: 'example000',
       age: 24,
+      createdAt: expect.any(Date),
     };
 
     await loginUser(req, res, () => {});

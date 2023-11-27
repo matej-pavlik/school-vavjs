@@ -6,4 +6,5 @@ export const ErrorScope = {
 export const ErrorPathScope = {
   BODY: 'BODY',
   PARAMS: 'PARAMS',
+  HEADERS: 'HEADERS',
 };

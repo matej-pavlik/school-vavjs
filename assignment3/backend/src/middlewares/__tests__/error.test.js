@@ -21,6 +21,9 @@ describe('errorMiddleware()', () => {
           id: z.string(),
         })
         .strict(),
+      headers: z.object({
+        authorization: z.string(),
+      }),
     });
     const malformedReq = {
       body: {
@@ -70,6 +73,14 @@ describe('errorMiddleware()', () => {
           message: 'Required',
           metadata: {
             pathScope: 'PARAMS',
+            path: [],
+          },
+        },
+        {
+          scope: 'REQUEST',
+          message: 'Required',
+          metadata: {
+            pathScope: 'HEADERS',
             path: [],
           },
         },
