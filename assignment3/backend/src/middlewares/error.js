@@ -9,6 +9,9 @@ function getPathScope(path) {
   if (path[0] === 'params') {
     return ErrorPathScope.PARAMS;
   }
+  if (path[0] === 'headers') {
+    return ErrorPathScope.HEADERS;
+  }
 
   throw new Error('Invalid path scope');
 }

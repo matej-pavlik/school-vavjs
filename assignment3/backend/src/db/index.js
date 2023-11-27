@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { hashPassword } from '../utils/security.js';
-import { userSchema } from './entities.js';
+import { advertisementSchema, rideSchema, rideTypeSchema, userSchema } from './entities.js';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -10,7 +10,7 @@ const dataSource = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   synchronize: true, // TODO remove sync in production
-  entities: [userSchema],
+  entities: [userSchema, rideSchema, rideTypeSchema, advertisementSchema],
 });
 
 async function seed() {
@@ -28,6 +28,9 @@ async function seed() {
 
 export default {
   user: dataSource.getRepository(userSchema),
+  ride: dataSource.getRepository(rideSchema),
+  rideType: dataSource.getRepository(rideTypeSchema),
+  advertisement: dataSource.getRepository(advertisementSchema),
   initialize: () => dataSource.initialize(),
   seed,
 };

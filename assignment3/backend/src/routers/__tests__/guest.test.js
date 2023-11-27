@@ -1,5 +1,5 @@
 import { expect } from 'expect';
-import { beforeEach, describe, test } from 'mocha';
+import { describe, test } from 'mocha';
 import request from 'supertest';
 import app from '../../app.js';
 
@@ -18,6 +18,7 @@ describe('Guest: registration', () => {
       email: 'example@example.com',
       username: 'username',
       age: 24,
+      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);
@@ -27,30 +28,19 @@ describe('Guest: registration', () => {
 });
 
 describe('Guest: login', () => {
-  beforeEach(async () => {
-    const url = '/register';
-    const body = {
-      email: 'example@example.com',
-      username: 'username',
-      password: 'somePassword123',
-      age: 24,
-    };
-
-    await request(app).post(url).send(body);
-  });
-
   test('Successful login: email', async () => {
     const url = '/login';
     const body = {
-      login: 'example@example.com',
-      password: 'somePassword123',
+      login: 'test@example.com',
+      password: 'testpassword',
     };
     const expected = {
       id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'username',
-      age: 24,
+      email: 'test@example.com',
+      username: 'testusername',
+      age: 40,
+      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);
@@ -61,15 +51,16 @@ describe('Guest: login', () => {
   test('Successful login: username', async () => {
     const url = '/login';
     const body = {
-      login: 'username',
-      password: 'somePassword123',
+      login: 'testusername',
+      password: 'testpassword',
     };
     const expected = {
       id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'username',
-      age: 24,
+      email: 'test@example.com',
+      username: 'testusername',
+      age: 40,
+      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);
@@ -80,7 +71,7 @@ describe('Guest: login', () => {
   test('Invalid credentials', async () => {
     const url = '/login';
     const body = {
-      login: 'username',
+      login: 'testusername',
       password: 'wrongPassword',
     };
     const expectedStatusCode = 401;
