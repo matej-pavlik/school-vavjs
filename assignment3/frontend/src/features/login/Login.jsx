@@ -1,9 +1,10 @@
 import { Alert, Button, FormControl, FormLabel, Input, Link, Stack, Typography } from '@mui/joy';
 import Card from '@mui/joy/Card';
-import { Form as RouterForm, Link as RouterLink, useActionData } from 'react-router-dom';
+import { Form as RouterForm, Link as RouterLink } from 'react-router-dom';
+import { useActionErrors } from '@/features/common/hooks';
 
 export default function Login() {
-  const errors = useActionData();
+  const errors = useActionErrors();
 
   return (
     <Stack direction="row" sx={{ p: 1, height: '100%' }}>

@@ -17,10 +17,11 @@ function renderWithRouter(ui, route = {}, options = {}) {
       {
         element: ui,
         action: () => null,
-        ...route, // route.path is required
+        path: '/',
+        ...route,
       },
     ],
-    { initialEntries: [route.path] },
+    { initialEntries: [route.path || '/'] },
   );
 
   return customRender(<RouterProvider router={router} />, options);

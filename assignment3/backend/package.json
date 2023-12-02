@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./src/main.js",
     "dev": "nodemon ./src/main.js",
-    "test": "mocha"
+    "test": "mocha --config mocha.json",
+    "test:e2e": "mocha --config mocha-e2e.json"
   },
   "author": "Matej Pavlík",
   "license": "ISC",
@@ -26,7 +27,7 @@
     "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
     "pptr-testing-library": "^0.7.0",
-    "puppeteer": "^21.5.2",
+    "puppeteer": "^20.0.0",
     "sinon": "^17.0.1",
     "supertest": "^6.3.3",
     "typeorm-transactional-tests": "^2.0.0"

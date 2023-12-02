@@ -1,4 +1,8 @@
-export function parseFieldErrors(errors, pathIndex = 0) {
+export function parseResponseErrors({ errors }, pathIndex = 0) {
+  if (!errors) {
+    return null;
+  }
+
   const result = {};
 
   errors.forEach((error) => {
@@ -15,7 +19,7 @@ export function parseFieldErrors(errors, pathIndex = 0) {
       if (path.length > pathIndex + 1) {
         result[field] = {
           ...result[field],
-          ...parseFieldErrors([error], pathIndex + 1),
+          ...(parseResponseErrors({ errors: [error] }, pathIndex + 1) || {}),
         };
         return;
       }

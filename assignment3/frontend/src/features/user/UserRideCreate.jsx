@@ -1,16 +1,15 @@
-import { Button, FormControl, FormLabel, Input, Option, Select, Stack, Typography } from '@mui/joy';
+import { Box, Button, FormControl, FormLabel, Input, Option, Select, Stack } from '@mui/joy';
 import { Form as RouteForm, Link as RouterLink } from 'react-router-dom';
+import PageHeading from './PageHeading';
 
 export default function UserRideCreate() {
   return (
-    <Stack method="post" component={RouteForm} sx={{ p: 1, height: '100%' }}>
-      <Typography component="h1" level="h3" sx={{ mb: 1 }}>
-        Create a new ride
-      </Typography>
+    <Box method="post" component={RouteForm}>
+      <PageHeading>Add new ride</PageHeading>
 
       <Stack spacing={1}>
         <FormControl>
-          <FormLabel>Login</FormLabel>
+          <FormLabel>Type</FormLabel>
           <Select name="type" defaultValue="ROUTE" required>
             <Option value="ROUTE">Route</Option>
             <Option value="DURATION">Duration</Option>
@@ -28,12 +27,12 @@ export default function UserRideCreate() {
       </Stack>
 
       <Button type="submit" variant="solid" sx={{ mt: 2 }}>
-        Create new ride
+        Add new ride
       </Button>
 
       <Button component={RouterLink} to="/user/rides" sx={{ mt: 2 }} variant="outlined">
-        Back
+        Back to rides
       </Button>
-    </Stack>
+    </Box>
   );
 }

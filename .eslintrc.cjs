@@ -7,7 +7,7 @@ module.exports = {
     extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
     overrides: [
         {
-            files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+            files: ['**/__tests__/**/*.[jt]s?(x)'],
             extends: ['plugin:testing-library/react'],
         },
     ],

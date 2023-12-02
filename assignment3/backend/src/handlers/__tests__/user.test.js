@@ -3,7 +3,7 @@ import { beforeEach, describe, test } from 'mocha';
 import sinon from 'sinon';
 import { createResponse } from '../../../test/utils.js';
 import { AuthenticationError, ValidationError } from '../../utils/errors.js';
-import { createUser, loginUser } from '../user.js';
+import { createUser, getCurrentUser, loginUser } from '../user.js';
 
 function createUserRequest(mergeData = {}) {
   return {
@@ -29,12 +29,7 @@ describe('createUser()', () => {
     };
     const { res, jsonSpy } = createResponse();
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'example000',
-      age: 24,
-      createdAt: expect.any(Date),
     };
 
     await createUser(req, res, () => {});
@@ -105,12 +100,7 @@ describe('loginUser()', () => {
     };
     const { res, jsonSpy } = createResponse();
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'example000',
-      age: 24,
-      createdAt: expect.any(Date),
     };
 
     await loginUser(req, res, () => {});
@@ -127,12 +117,7 @@ describe('loginUser()', () => {
     };
     const { res, jsonSpy } = createResponse();
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'example000',
-      age: 24,
-      createdAt: expect.any(Date),
     };
 
     await loginUser(req, res, () => {});
@@ -155,5 +140,24 @@ describe('loginUser()', () => {
 
     expect(nextSpy.args).toEqual([[expected]]);
     expect(jsonSpy.notCalled).toEqual(true);
+  });
+});
+
+describe('getCurrentUser()', () => {
+  test('Gets current user', async () => {
+    const req = {
+      user: {
+        id: 'd046a8b9-5815-40b0-a127-6fbca49a90e3',
+        email: 'new@user.com',
+        username: 'newuser',
+        age: 22,
+        createdAt: '2023-12-01T15:45:13.318Z',
+      },
+    };
+    const { res, jsonSpy } = createResponse();
+
+    await getCurrentUser(req, res, () => {});
+
+    expect(jsonSpy.args).toEqual([[req.user]]);
   });
 });

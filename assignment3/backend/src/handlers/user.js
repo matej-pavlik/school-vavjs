@@ -16,10 +16,8 @@ export async function createUser(req, res, next) {
   }
 
   const user = await db.user.save({ email, username, password: await hashPassword(password), age });
-  delete user.password;
-  const token = await createJWT(user);
 
-  res.json({ ...user, token });
+  res.json({ token: await createJWT(user) });
 }
 
 export async function loginUser(req, res, next) {
@@ -32,8 +30,9 @@ export async function loginUser(req, res, next) {
     return;
   }
 
-  delete user.password;
-  const token = await createJWT(user);
+  res.json({ token: await createJWT(user) });
+}
 
-  res.json({ ...user, token });
+export async function getCurrentUser(req, res) {
+  res.json(req.user);
 }

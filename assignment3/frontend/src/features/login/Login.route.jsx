@@ -1,6 +1,6 @@
 import { redirect } from 'react-router-dom';
-import { fetchData } from '@/features/common/helperFetch';
-import { setUser } from '@/state';
+import { fetchData } from '@/features/common/helpersFetch';
+import { setUserToken } from '@/state';
 
 export const loginRouteHandlers = {
   async action({ request }) {
@@ -8,13 +8,12 @@ export const loginRouteHandlers = {
       method: 'POST',
       body: Object.fromEntries(await request.formData()),
     });
-    const resJson = await res.json();
 
     if (res.ok) {
-      setUser(resJson);
+      setUserToken((await res.json()).token);
       return redirect('/user');
     }
 
-    return resJson.errors;
+    return res;
   },
 };

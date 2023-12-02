@@ -4,15 +4,20 @@ export async function createRide(req, res) {
   const { date, type, rideTypeId, value } = req.body;
   const { user } = req;
 
-  const ride = db.ride.create({ date, type, value });
-  ride.user = user;
-  ride.rideTypeId = rideTypeId;
-  res.json(await db.ride.save(ride));
+  const { id } = await db.ride.save({
+    date,
+    type,
+    value,
+    user: { id: user.id },
+    rideType: { id: rideTypeId ?? null },
+  });
+
+  res.json(await db.ride.findBy({ id }));
 }
 
 export async function getUserRides(req, res) {
   const { user } = req;
 
-  const rides = await db.ride.findBy({ user });
+  const rides = await db.ride.findBy({ user: { id: user.id } });
   res.json(rides);
 }

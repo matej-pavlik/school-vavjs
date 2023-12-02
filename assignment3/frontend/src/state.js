@@ -1,15 +1,11 @@
 const state = {
-  user: null,
+  token: null,
 };
 
-export function getUser() {
-  return state.user;
-}
-
 export function getUserToken() {
-  return state.user?.token;
+  return state.token;
 }
 
-export function setUser(user) {
-  state.user = user;
+export function setUserToken(token) {
+  state.token = token;
 }

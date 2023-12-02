@@ -15,22 +15,40 @@ beforeEach(async () => {
   headers = { Authorization: `Bearer ${res.body.token}` };
 });
 
+describe('User: get me', () => {
+  test('Returns current user', async () => {
+    const url = '/api/users/me';
+    const expected = {
+      id: expect.any(String),
+      email: 'test@example.com',
+      username: 'testusername',
+      age: 40,
+      createdAt: expect.any(String),
+    };
+
+    const res = await request(app).get(url).set(headers).send();
+
+    expect(res.body).toEqual(expected);
+  });
+});
+
 describe('User: create ride', () => {
   test('Creates ride', async () => {
     const url = '/api/rides';
     const body = {
-      date: '2023-11-27T04:29:51Z',
+      date: '2023-11-27T04:29:51.000Z',
       type: 'ROUTE',
       value: 100,
     };
-    const expected = {
-      id: expect.any(String),
-      date: '2023-11-27T04:29:51Z',
-      type: 'ROUTE',
-      value: 100,
-      userId: expect.any(String),
-      createdAt: expect.any(String),
-    };
+    const expected = [
+      {
+        id: expect.any(String),
+        date: '2023-11-27T04:29:51.000Z',
+        type: 'ROUTE',
+        value: 100,
+        createdAt: expect.any(String),
+      },
+    ];
 
     const res = await request(app).post(url).set(headers).send(body);
 

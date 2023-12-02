@@ -5,10 +5,10 @@ export async function hashPassword(password) {
   return bcrypt.hash(password, 10);
 }
 
-export async function createJWT({ id, email, username, age }) {
+export async function createJWT({ id, email, username, age, createdAt }) {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      { user: { id, email, username, age } },
+      { user: { id, email, username, age, createdAt } },
       process.env.JWT_SECRET,
       { expiresIn: '1y' },
       (err, token) => {
