@@ -13,12 +13,7 @@ describe('Guest: registration', () => {
       age: 24,
     };
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'example@example.com',
-      username: 'username',
-      age: 24,
-      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);
@@ -35,12 +30,7 @@ describe('Guest: login', () => {
       password: 'testpassword',
     };
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'test@example.com',
-      username: 'testusername',
-      age: 40,
-      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);
@@ -55,12 +45,7 @@ describe('Guest: login', () => {
       password: 'testpassword',
     };
     const expected = {
-      id: expect.any(String),
       token: expect.any(String),
-      email: 'test@example.com',
-      username: 'testusername',
-      age: 40,
-      createdAt: expect.any(String),
     };
 
     const res = await request(app).post(url).send(body);

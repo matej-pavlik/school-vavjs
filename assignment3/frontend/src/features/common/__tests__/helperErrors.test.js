@@ -1,66 +1,77 @@
 import { describe, expect, test } from 'vitest';
-import { parseFieldErrors } from '../helperErrors';
+import { parseResponseErrors } from '../helpersErrors';
 
-describe('parseFieldErrors()', () => {
+describe('parseResponseErrors()', () => {
+  test('No errors', () => {
+    const response = {};
+    const expected = null;
+
+    const actual = parseResponseErrors(response);
+
+    expect(actual).toEqual(expected);
+  });
+
   test('Parses errors', () => {
-    const errors = [
-      {
-        scope: 'REQUEST',
-        message: 'Required',
-        metadata: {
-          pathScope: 'BODY',
-          path: ['nested', 'property'],
+    const response = {
+      errors: [
+        {
+          scope: 'REQUEST',
+          message: 'Required',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['nested', 'property'],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: 'Required',
-        metadata: {
-          pathScope: 'BODY',
-          path: ['nested'],
+        {
+          scope: 'REQUEST',
+          message: 'Required',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['nested'],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: 'Some message',
-        metadata: {
-          pathScope: 'BODY',
-          path: ['otherNested', 'otherProperty'],
+        {
+          scope: 'REQUEST',
+          message: 'Some message',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['otherNested', 'otherProperty'],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: 'Required',
-        metadata: {
-          pathScope: 'BODY',
-          path: ['email'],
+        {
+          scope: 'REQUEST',
+          message: 'Required',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['email'],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: 'Another message',
-        metadata: {
-          pathScope: 'BODY',
-          path: ['email'],
+        {
+          scope: 'REQUEST',
+          message: 'Another message',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['email'],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: "Unrecognized key(s) in object: 'somethingElse'",
-        metadata: {
-          pathScope: 'BODY',
-          path: [],
+        {
+          scope: 'REQUEST',
+          message: "Unrecognized key(s) in object: 'somethingElse'",
+          metadata: {
+            pathScope: 'BODY',
+            path: [],
+          },
         },
-      },
-      {
-        scope: 'REQUEST',
-        message: 'Required',
-        metadata: {
-          pathScope: 'PARAMS',
-          path: [],
+        {
+          scope: 'REQUEST',
+          message: 'Required',
+          metadata: {
+            pathScope: 'PARAMS',
+            path: [],
+          },
         },
-      },
-    ];
+      ],
+    };
     const expected = {
       nested: {
         property: {
@@ -122,7 +133,7 @@ describe('parseFieldErrors()', () => {
       },
     };
 
-    const actual = parseFieldErrors(errors);
+    const actual = parseResponseErrors(response);
 
     expect(actual).toEqual(expected);
   });

@@ -46,13 +46,17 @@ export const rideSchema = new EntitySchema({
     },
     value: {
       type: 'decimal',
+      transformer: {
+        to: (value) => value,
+        from: (value) => Number(value),
+      },
     },
   },
   relations: {
     user: {
       target: 'User',
       type: 'many-to-one',
-      cascade: true,
+      onDelete: 'CASCADE',
     },
     rideType: {
       target: 'RideType',

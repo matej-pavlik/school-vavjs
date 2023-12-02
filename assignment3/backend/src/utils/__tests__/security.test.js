@@ -23,6 +23,7 @@ describe('createJWT()', () => {
       username: 'example000',
       password: 'hashed',
       age: 25,
+      createdAt: '2023-12-01T15:45:13.318Z',
     };
     const expected = expect.any(String);
 
@@ -38,12 +39,14 @@ describe('createJWT()', () => {
       username: 'example000',
       password: 'hashed',
       age: 25,
+      createdAt: '2023-12-01T15:45:13.318Z',
     };
     const expectedDecoded = {
       id: '94953c8b-89fd-45b7-853c-438bc25ab7bf',
       email: 'example@exmaple.com',
       username: 'example000',
       age: 25,
+      createdAt: '2023-12-01T15:45:13.318Z',
     };
 
     const actual = jwt.decode(await createJWT(user)).user;
@@ -67,6 +70,7 @@ describe('verifyJWT()', () => {
       username: 'example000',
       password: 'hashed',
       age: 25,
+      createdAt: '2023-12-01T15:45:13.318Z',
     };
     const token = await createJWT(user);
     const expected = {
@@ -74,6 +78,7 @@ describe('verifyJWT()', () => {
       email: 'example@exmaple.com',
       username: 'example000',
       age: 25,
+      createdAt: '2023-12-01T15:45:13.318Z',
     };
 
     const actual = await verifyJWT(token);

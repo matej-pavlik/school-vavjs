@@ -1,14 +1,19 @@
+import { memoizeWith } from 'ramda';
 import { redirect } from 'react-router-dom';
-import { getUser } from '@/state';
+import { getUserToken } from '@/state';
+import { fetchData } from '../common/helpersFetch';
 
 export const userLayoutRouteHandlers = {
-  loader() {
-    const user = getUser();
+  loader: memoizeWith(
+    () => getUserToken(),
+    async () => {
+      const res = await fetchData('api/users/me');
 
-    if (user) {
-      return user;
-    }
+      if (res.ok) {
+        return res.json();
+      }
 
-    return redirect('/login');
-  },
+      return redirect('/login');
+    },
+  ),
 };

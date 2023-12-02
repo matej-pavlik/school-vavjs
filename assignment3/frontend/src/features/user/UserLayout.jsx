@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemButton, Sheet, Stack, Typography } from '@mui/joy';
+import { Box, List, ListItem, ListItemButton, Sheet, Stack, Typography } from '@mui/joy';
 import {
   NavLink as RouterNavLink,
   Outlet as RouterOutlet,
@@ -19,8 +19,12 @@ export default function UserLayout() {
 
   return (
     <Stack direction="row" sx={{ height: '100%' }}>
-      <Sheet variant="outlined" sx={{ minWidth: 300 }}>
-        <Typography level="title-md" sx={{ pt: 1.5, pb: 1, px: 2, textAlign: 'center' }}>
+      <Sheet component="aside" variant="outlined" sx={{ minWidth: 300 }}>
+        <Typography
+          component="h1"
+          level="title-md"
+          sx={{ pt: 1.5, pb: 1, px: 2, textAlign: 'center' }}
+        >
           {user.email}
         </Typography>
 
@@ -39,7 +43,10 @@ export default function UserLayout() {
           ))}
         </List>
       </Sheet>
-      <RouterOutlet />
+
+      <Box component="main" sx={{ py: 1.25, px: 2 }}>
+        <RouterOutlet />
+      </Box>
     </Stack>
   );
 }
