@@ -1,10 +1,10 @@
 import { getUserToken } from '@/state';
 
 export async function fetchData(url, { method = 'GET', body } = {}) {
-  const realUrl = `${import.meta.env.VITE_API_URL}/${url}`;
+  const relativeUrl = `/${url}`;
   const userToken = getUserToken();
 
-  return fetch(realUrl, {
+  return fetch(relativeUrl, {
     method,
     headers: {
       ...(userToken ? { Authorization: `Bearer ${getUserToken()}` } : {}),
