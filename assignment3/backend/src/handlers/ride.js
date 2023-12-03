@@ -12,7 +12,7 @@ export async function createRide(req, res) {
     rideType: { id: rideTypeId ?? null },
   });
 
-  res.json(await db.ride.findBy({ id }));
+  res.json(await db.ride.findOneBy({ id }));
 }
 
 export async function getUserRides(req, res) {

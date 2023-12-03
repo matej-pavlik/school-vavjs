@@ -40,15 +40,13 @@ describe('User: create ride', () => {
       type: 'ROUTE',
       value: 100,
     };
-    const expected = [
-      {
-        id: expect.any(String),
-        date: '2023-11-27T04:29:51.000Z',
-        type: 'ROUTE',
-        value: 100,
-        createdAt: expect.any(String),
-      },
-    ];
+    const expected = {
+      id: expect.any(String),
+      date: '2023-11-27T04:29:51.000Z',
+      type: 'ROUTE',
+      value: 100,
+      createdAt: expect.any(String),
+    };
 
     const res = await request(app).post(url).set(headers).send(body);
 
