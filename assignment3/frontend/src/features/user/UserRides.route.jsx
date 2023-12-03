@@ -5,8 +5,7 @@ export const userRidesRouteHandlers = {
     return fetchData('api/rides');
   },
   async action({ request }) {
-    // TODO delete ride
-    console.log('data', Object.fromEntries(await request.formData()));
-    return null;
+    const data = Object.fromEntries(await request.formData());
+    return fetchData(`api/rides/${data.id}`, { method: 'DELETE' });
   },
 };

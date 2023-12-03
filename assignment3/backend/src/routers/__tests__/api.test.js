@@ -1,6 +1,7 @@
 import { expect } from 'expect';
 import { beforeEach, describe, test } from 'mocha';
 import request from 'supertest';
+import { createRide } from '../../../test/utils.js';
 import app from '../../app.js';
 
 let headers;
@@ -49,6 +50,18 @@ describe('User: create ride', () => {
     };
 
     const res = await request(app).post(url).set(headers).send(body);
+
+    expect(res.body).toEqual(expected);
+  });
+});
+
+describe('User: delete ride', () => {
+  test('Deletes ride', async () => {
+    const ride = await createRide();
+    const url = `/api/rides/${ride.id}`;
+    const expected = {};
+
+    const res = await request(app).delete(url).set(headers).send();
 
     expect(res.body).toEqual(expected);
   });

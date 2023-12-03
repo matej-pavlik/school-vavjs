@@ -1,7 +1,14 @@
 import { expect } from 'expect';
 import { describe, test } from 'mocha';
-import { createResponse, getCurrentUser } from '../../../test/utils.js';
-import { createRide } from '../ride.js';
+import sinon from 'sinon';
+import {
+  createResponse,
+  createRide as createTestRide,
+  getCurrentUser,
+  getOtherUser,
+} from '../../../test/utils.js';
+import { ValidationError } from '../../utils/errors.js';
+import { createRide, deleteRide } from '../ride.js';
 
 describe('createRide()', async () => {
   test('Creates ride', async () => {
@@ -25,5 +32,66 @@ describe('createRide()', async () => {
     await createRide(req, res);
 
     expect(jsonSpy.args).toEqual([[expected]]);
+  });
+});
+
+describe('deleteRide()', () => {
+  test('Deletes ride', async () => {
+    const ride = await createTestRide();
+    const req = {
+      user: await getCurrentUser(),
+      params: {
+        id: ride.id,
+      },
+    };
+    const { res, jsonSpy } = createResponse();
+    const expected = {};
+
+    await deleteRide(req, res, () => {});
+
+    expect(jsonSpy.args).toEqual([[expected]]);
+  });
+
+  test("Other user cannot delete someone else's ride", async () => {
+    const ride = await createTestRide();
+    const req = {
+      user: await getOtherUser(),
+      params: {
+        id: ride.id,
+      },
+    };
+    const { res, jsonSpy } = createResponse();
+    const nextSpy = sinon.spy();
+    const expectedError = expect.any(ValidationError);
+    const expectedMsg = 'Invalid ride id';
+    const expectedMetadata = { pathScope: 'PARAMS', path: ['id'] };
+
+    await deleteRide(req, res, nextSpy);
+
+    expect(nextSpy.args).toEqual([[expectedError]]);
+    expect(nextSpy.args[0][0].message).toEqual(expectedMsg);
+    expect(nextSpy.args[0][0].metadata).toEqual(expectedMetadata);
+    expect(jsonSpy.notCalled).toEqual(true);
+  });
+
+  test('Passes ValidationError on invalid ride id', async () => {
+    const req = {
+      user: await getCurrentUser(),
+      params: {
+        id: 'non-existent',
+      },
+    };
+    const { res, jsonSpy } = createResponse();
+    const nextSpy = sinon.spy();
+    const expectedError = expect.any(ValidationError);
+    const expectedMsg = 'Invalid ride id';
+    const expectedMetadata = { pathScope: 'PARAMS', path: ['id'] };
+
+    await deleteRide(req, res, nextSpy);
+
+    expect(nextSpy.args).toEqual([[expectedError]]);
+    expect(nextSpy.args[0][0].message).toEqual(expectedMsg);
+    expect(nextSpy.args[0][0].metadata).toEqual(expectedMetadata);
+    expect(jsonSpy.notCalled).toEqual(true);
   });
 });

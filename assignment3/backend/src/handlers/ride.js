@@ -1,4 +1,6 @@
+import { ErrorPathScope } from '../constants/errorFormat.js';
 import db from '../db/index.js';
+import { ValidationError } from '../utils/errors.js';
 
 export async function createRide(req, res) {
   const { date, type, rideTypeId, value } = req.body;
@@ -13,6 +15,26 @@ export async function createRide(req, res) {
   });
 
   res.json(await db.ride.findOneBy({ id }));
+}
+
+export async function deleteRide(req, res, next) {
+  const { id } = req.params;
+  const { user } = req;
+
+  const validationError = new ValidationError('Invalid ride id', {
+    pathScope: ErrorPathScope.PARAMS,
+    path: 'id',
+  });
+
+  await db.ride
+    .findOneByOrFail({ id, user: { id: user.id } })
+    .then(async () => {
+      await db.ride.delete(id);
+      res.json({});
+    })
+    .catch(() => {
+      next(validationError);
+    });
 }
 
 export async function getUserRides(req, res) {

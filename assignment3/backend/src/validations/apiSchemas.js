@@ -10,3 +10,7 @@ export const rideCreateSchema = z.object({
     })
     .strict(),
 });
+
+export const rideDeleteSchema = z.object({
+  params: z.object({ id: z.string() }).strict(),
+});
