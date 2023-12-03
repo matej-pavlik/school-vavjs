@@ -12,7 +12,7 @@ describe('E2E: Add new ride', () => {
   // TODO custom docker container for e2e tests
   beforeEach(async () => {
     await db.initialize();
-    await db.user.delete({ email: 'e2e@example.com' }); // By deleting user we also cascade delete all his rides
+    await db.user.delete({ email: 'e2e@example.com' }); // By deleting the user we also cascade delete all his rides
     await db.user.save({
       email: 'e2e@example.com',
       username: 'e2e',
@@ -24,7 +24,7 @@ describe('E2E: Add new ride', () => {
   let browser;
 
   test('Correctly adds new ride', async () => {
-    browser = await puppeteer.launch({ headless: false });
+    browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.goto(process.env.E2E_APP_URL);
     const document = await getDocument(page);

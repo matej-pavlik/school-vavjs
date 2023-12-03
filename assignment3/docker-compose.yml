@@ -15,3 +15,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget $${E2E_APP_URL}']
+      interval: 1s
+  e2e:
+    build:
+      context: .
+      dockerfile: e2e.Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      app:
+        condition: service_healthy
