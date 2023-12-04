@@ -77,6 +77,13 @@ export const rideTypeSchema = new EntitySchema({
       type: 'varchar',
     },
   },
+  relations: {
+    user: {
+      target: 'User',
+      type: 'many-to-one',
+      onDelete: 'CASCADE',
+    },
+  },
 });
 
 export const advertisementSchema = new EntitySchema({

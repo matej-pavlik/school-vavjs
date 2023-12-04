@@ -15,6 +15,10 @@ export default function UserLayout() {
       label: 'Rides',
       to: '/user/rides',
     },
+    {
+      label: 'Ride types',
+      to: '/user/ride-types',
+    },
   ];
 
   return (

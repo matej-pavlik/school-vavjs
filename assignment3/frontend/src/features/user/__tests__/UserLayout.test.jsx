@@ -12,7 +12,7 @@ describe('<UserLayout />', () => {
       createdAt: '2023-12-01T16:39:51.271Z',
     });
     const expectedHeading = 'admin@example.com';
-    const expectedNavigationLinks = ['Rides'];
+    const expectedNavigationLinks = ['Rides', 'Ride types'];
     const expectedOutletText = 'Rides';
     renderWithRouter(<UserLayout />, {
       loader,
