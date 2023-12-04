@@ -17,6 +17,12 @@ export async function createRide(req, res) {
   res.json(await db.ride.findOneBy({ id }));
 }
 
+export async function getUserRides(req, res) {
+  const { user } = req;
+  const rides = (await db.ride.findBy({ user: { id: user.id } })).reverse();
+  res.json(rides);
+}
+
 export async function deleteRide(req, res, next) {
   const { id } = req.params;
   const { user } = req;
@@ -35,11 +41,4 @@ export async function deleteRide(req, res, next) {
     .catch(() => {
       next(validationError);
     });
-}
-
-export async function getUserRides(req, res) {
-  const { user } = req;
-
-  const rides = await db.ride.findBy({ user: { id: user.id } });
-  res.json(rides);
 }

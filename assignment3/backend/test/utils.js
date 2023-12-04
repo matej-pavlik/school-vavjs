@@ -30,12 +30,13 @@ export async function getOtherUser() {
   return user;
 }
 
-export async function createRide() {
+export async function createRide(mergePayload = {}) {
   return db.ride.save({
     date: '2023-11-27T04:29:51.000Z',
     type: 'ROUTE',
     value: 100,
     user: { id: (await getCurrentUser()).id },
     rideType: null,
+    ...mergePayload,
   });
 }

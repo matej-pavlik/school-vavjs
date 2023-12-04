@@ -55,6 +55,35 @@ describe('User: create ride', () => {
   });
 });
 
+describe('User: get rides', () => {
+  test('Gets rides', async () => {
+    const url = '/api/rides';
+    const rides = [
+      await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 }),
+      await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 }),
+    ];
+    // Ordered by createdAt
+    const expected = [
+      {
+        id: expect.any(String),
+        date: expect.any(Date),
+        type: 'CONSUMPTION',
+        value: 50,
+        createdAt: expect.any(Date),
+      },
+      {
+        id: expect.any(String),
+        date: expect.any(Date),
+        type: 'ROUTE',
+        value: 100,
+        createdAt: expect.any(Date),
+      },
+    ];
+
+    await request(app).get(url).set(headers).send();
+  });
+});
+
 describe('User: delete ride', () => {
   test('Deletes ride', async () => {
     const ride = await createRide();

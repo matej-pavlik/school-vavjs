@@ -8,7 +8,7 @@ import {
   getOtherUser,
 } from '../../../test/utils.js';
 import { ValidationError } from '../../utils/errors.js';
-import { createRide, deleteRide } from '../ride.js';
+import { createRide, deleteRide, getUserRides } from '../ride.js';
 
 describe('createRide()', async () => {
   test('Creates ride', async () => {
@@ -30,6 +30,40 @@ describe('createRide()', async () => {
     };
 
     await createRide(req, res);
+
+    expect(jsonSpy.args).toEqual([[expected]]);
+  });
+});
+
+describe('getUserRides()', () => {
+  test('Gets user rides', async () => {
+    const rides = [
+      await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 }),
+      await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 }),
+    ];
+    const req = {
+      user: await getCurrentUser(),
+    };
+    const { res, jsonSpy } = createResponse();
+    // Ordered by createdAt
+    const expected = [
+      {
+        id: expect.any(String),
+        date: expect.any(Date),
+        type: 'CONSUMPTION',
+        value: 50,
+        createdAt: expect.any(Date),
+      },
+      {
+        id: expect.any(String),
+        date: expect.any(Date),
+        type: 'ROUTE',
+        value: 100,
+        createdAt: expect.any(Date),
+      },
+    ];
+
+    await getUserRides(req, res);
 
     expect(jsonSpy.args).toEqual([[expected]]);
   });
