@@ -37,10 +37,6 @@ describe('createRide()', async () => {
 
 describe('getUserRides()', () => {
   test('Gets user rides', async () => {
-    const rides = [
-      await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 }),
-      await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 }),
-    ];
     const req = {
       user: await getCurrentUser(),
     };
@@ -63,6 +59,8 @@ describe('getUserRides()', () => {
       },
     ];
 
+    await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 });
+    await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 });
     await getUserRides(req, res);
 
     expect(jsonSpy.args).toEqual([[expected]]);
