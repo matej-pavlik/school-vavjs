@@ -49,7 +49,7 @@ export async function deleteRide(req, res, next) {
       await db.ride.delete(id);
       res.json({});
     })
-    .catch((err) => {
+    .catch(() => {
       next(validationError);
     });
 }
