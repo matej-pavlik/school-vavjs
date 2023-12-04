@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import {
   createResponse,
   createRide as createTestRide,
+  createRideType as createTestRideType,
   getCurrentUser,
   getOtherUser,
 } from '../../../test/utils.js';
@@ -12,12 +13,14 @@ import { createRide, deleteRide, getUserRides } from '../ride.js';
 
 describe('createRide()', async () => {
   test('Creates ride', async () => {
+    const rideType = await createTestRideType();
     const req = {
       user: await getCurrentUser(),
       body: {
         date: '2023-11-27T04:29:51.000Z',
         type: 'ROUTE',
         value: 100,
+        rideTypeId: rideType.id,
       },
     };
     const { res, jsonSpy } = createResponse();
@@ -26,6 +29,7 @@ describe('createRide()', async () => {
       date: expect.any(Date),
       type: 'ROUTE',
       value: 100,
+      rideType,
       createdAt: expect.any(Date),
     };
 
@@ -37,6 +41,7 @@ describe('createRide()', async () => {
 
 describe('getUserRides()', () => {
   test('Gets user rides', async () => {
+    const rideType = await createTestRideType();
     const req = {
       user: await getCurrentUser(),
     };
@@ -48,6 +53,7 @@ describe('getUserRides()', () => {
         date: expect.any(Date),
         type: 'CONSUMPTION',
         value: 50,
+        rideType: null,
         createdAt: expect.any(Date),
       },
       {
@@ -55,11 +61,12 @@ describe('getUserRides()', () => {
         date: expect.any(Date),
         type: 'ROUTE',
         value: 100,
+        rideType,
         createdAt: expect.any(Date),
       },
     ];
 
-    await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 });
+    await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100, rideType });
     await createTestRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 });
     await getUserRides(req, res);
 

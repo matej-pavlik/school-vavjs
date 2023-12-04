@@ -5,7 +5,7 @@ export const rideCreateSchema = z.object({
     .object({
       date: z.string().datetime(),
       type: z.enum(['ROUTE', 'DURATION', 'CONSUMPTION']),
-      rideTypeId: z.string().uuid().optional(),
+      rideTypeId: z.string().uuid().optional().or(z.null()),
       value: z.number().min(1).max(10000),
     })
     .strict(),

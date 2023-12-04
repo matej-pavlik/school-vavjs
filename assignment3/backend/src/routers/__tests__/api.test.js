@@ -40,12 +40,14 @@ describe('User: create ride', () => {
       date: '2023-11-27T04:29:51.000Z',
       type: 'ROUTE',
       value: 100,
+      rideTypeId: null,
     };
     const expected = {
       id: expect.any(String),
       date: '2023-11-27T04:29:51.000Z',
       type: 'ROUTE',
       value: 100,
+      rideType: null,
       createdAt: expect.any(String),
     };
 
@@ -58,6 +60,10 @@ describe('User: create ride', () => {
 describe('User: get rides', () => {
   test('Gets rides', async () => {
     const url = '/api/rides';
+    const rideType = await createRideType({
+      name: 'ride name',
+      description: 'ride type description',
+    });
     // Ordered by createdAt
     const expected = [
       {
@@ -65,6 +71,7 @@ describe('User: get rides', () => {
         date: expect.any(String),
         type: 'CONSUMPTION',
         value: 50,
+        rideType: null,
         createdAt: expect.any(String),
       },
       {
@@ -72,11 +79,17 @@ describe('User: get rides', () => {
         date: expect.any(String),
         type: 'ROUTE',
         value: 100,
+        rideType: {
+          id: expect.any(String),
+          name: 'ride name',
+          description: 'ride type description',
+          createdAt: expect.any(String),
+        },
         createdAt: expect.any(String),
       },
     ];
 
-    await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 });
+    await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100, rideType });
     await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 });
     const res = await request(app).get(url).set(headers).send();
 
