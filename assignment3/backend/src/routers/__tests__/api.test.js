@@ -58,29 +58,29 @@ describe('User: create ride', () => {
 describe('User: get rides', () => {
   test('Gets rides', async () => {
     const url = '/api/rides';
-    const rides = [
-      await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 }),
-      await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 }),
-    ];
     // Ordered by createdAt
     const expected = [
       {
         id: expect.any(String),
-        date: expect.any(Date),
+        date: expect.any(String),
         type: 'CONSUMPTION',
         value: 50,
-        createdAt: expect.any(Date),
+        createdAt: expect.any(String),
       },
       {
         id: expect.any(String),
-        date: expect.any(Date),
+        date: expect.any(String),
         type: 'ROUTE',
         value: 100,
-        createdAt: expect.any(Date),
+        createdAt: expect.any(String),
       },
     ];
 
-    await request(app).get(url).set(headers).send();
+    await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'ROUTE', value: 100 });
+    await createRide({ date: '2023-11-27T04:29:51.000Z', type: 'CONSUMPTION', value: 50 });
+    const res = await request(app).get(url).set(headers).send();
+
+    expect(res.body).toEqual(expected);
   });
 });
 
