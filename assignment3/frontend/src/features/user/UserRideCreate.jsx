@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   FormControl,
   FormHelperText,
@@ -17,10 +16,10 @@ export default function UserRideCreate() {
   const errors = useActionErrors({ parsed: true });
 
   return (
-    <Box method="post" component={RouteForm}>
+    <Stack direction="column" method="post" component={RouteForm}>
       <PageHeading>Add new ride</PageHeading>
 
-      <Stack spacing={1}>
+      <Stack spacing={1} sx={{ mt: 1 }}>
         <FormControl>
           <FormLabel>Type</FormLabel>
           <Select name="type" defaultValue="ROUTE" required>
@@ -45,10 +44,9 @@ export default function UserRideCreate() {
       <Button type="submit" variant="solid" sx={{ mt: 2 }}>
         Add new ride
       </Button>
-
       <Button component={RouterLink} to="/user/rides" sx={{ mt: 2 }} variant="outlined">
         Back to rides
       </Button>
-    </Box>
+    </Stack>
   );
 }
