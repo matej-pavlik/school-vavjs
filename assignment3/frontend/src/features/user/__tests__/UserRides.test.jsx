@@ -12,6 +12,12 @@ describe('<UserRides />', () => {
         date: '2000-02-21T23:00:00.000Z',
         type: 'ROUTE',
         value: '40',
+        rideType: {
+          id: '2583cf57-6d1b-465e-8091-c164751cb9c7',
+          createdAt: '2023-12-04T03:50:42.468Z',
+          name: 'ride name',
+          description: 'ride type description',
+        },
       },
       {
         id: '3134392a-37bb-4a6f-86b6-7bdbb117a368',
@@ -22,8 +28,11 @@ describe('<UserRides />', () => {
       },
     ];
     const expectedHeading = 'List of rides';
-    const expectedColumns = ['Date', 'Type', 'Value', 'Actions'];
-    const expectedRows = ['21.02.2000 Route 40 Delete', '25.12.2023 Consumption 1 Delete'];
+    const expectedColumns = ['Date', 'Type', 'Value', 'Ride type', 'Actions'];
+    const expectedRows = [
+      '21.02.2000 Route 40 ride name Delete',
+      '25.12.2023 Consumption 1 N/A Delete',
+    ];
     const expectedDeleteButtonText = 'Delete';
     const expectedAddRideLinkText = 'Add new ride';
     renderWithRouter(<UserRides />, { loader });

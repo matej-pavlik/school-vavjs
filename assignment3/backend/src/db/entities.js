@@ -61,7 +61,8 @@ export const rideSchema = new EntitySchema({
     rideType: {
       target: 'RideType',
       type: 'many-to-one',
-      nullable: true, // TODO does this have any effect?
+      onDelete: 'SET NULL',
+      nullable: true,
     },
   },
 });

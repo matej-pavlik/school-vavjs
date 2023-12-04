@@ -8,11 +8,12 @@ import {
   Select,
   Stack,
 } from '@mui/joy';
-import { Form as RouteForm, Link as RouterLink } from 'react-router-dom';
+import { Form as RouteForm, Link as RouterLink, useLoaderData } from 'react-router-dom';
 import { useActionErrors } from '../common/hooks';
 import PageHeading from './PageHeading';
 
 export default function UserRideCreate() {
+  const rideTypes = useLoaderData();
   const errors = useActionErrors({ parsed: true });
 
   return (
@@ -38,6 +39,17 @@ export default function UserRideCreate() {
           <FormLabel>Value</FormLabel>
           <Input name="value" type="number" required />
           <FormHelperText>{errors?.value?.errors?.[0].message}</FormHelperText>
+        </FormControl>
+        <FormControl>
+          <FormLabel>Ride type</FormLabel>
+          <Select name="rideTypeId">
+            {rideTypes.map((rideType) => (
+              <Option key={rideType.id} value={rideType.id}>
+                {rideType.name}
+              </Option>
+            ))}
+          </Select>
+          <FormHelperText />
         </FormControl>
       </Stack>
 

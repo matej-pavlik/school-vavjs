@@ -32,7 +32,7 @@ describe('E2E: Add new ride', () => {
     const rideType = 'Duration';
     const rideDate = '05/23/2023';
     const rideValue = '2000';
-    const expectedRideRow = '23.05.2023 Duration 2000 Delete';
+    const expectedRideRow = '23.05.2023 Duration 2000 N/A Delete';
 
     await findByLabelText(document, 'Login');
     await (await findByLabelText(document, 'Login')).type(login);

@@ -14,13 +14,24 @@ export async function createRide(req, res) {
     rideType: { id: rideTypeId ?? null },
   });
 
-  res.json(await db.ride.findOneBy({ id }));
+  res.json(
+    await db.ride.findOne({
+      where: { id },
+      relations: { rideType: true },
+    }),
+  );
 }
 
 export async function getUserRides(req, res) {
   const { user } = req;
-  const rides = (await db.ride.findBy({ user: { id: user.id } })).reverse();
-  res.json(rides);
+  res.json(
+    (
+      await db.ride.find({
+        where: { user: { id: user.id } },
+        relations: { rideType: true },
+      })
+    ).reverse(),
+  );
 }
 
 export async function deleteRide(req, res, next) {
@@ -38,7 +49,7 @@ export async function deleteRide(req, res, next) {
       await db.ride.delete(id);
       res.json({});
     })
-    .catch(() => {
+    .catch((err) => {
       next(validationError);
     });
 }

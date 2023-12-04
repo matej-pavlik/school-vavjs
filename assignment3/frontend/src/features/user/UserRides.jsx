@@ -24,6 +24,7 @@ export default function UserRides() {
             <th>Date</th>
             <th>Type</th>
             <th>Value</th>
+            <th>Ride type</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -33,6 +34,7 @@ export default function UserRides() {
               <td>{format(new Date(ride.date), 'dd.MM.yyyy')}</td>
               <td>{capitalize(ride.type)}</td>
               <td>{ride.value}</td>
+              <td>{ride.rideType?.name || 'N/A'}</td>
               <td>
                 <Button
                   size="sm"
