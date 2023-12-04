@@ -1,8 +1,21 @@
-import { Box, Button, FormControl, FormLabel, Input, Option, Select, Stack } from '@mui/joy';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Option,
+  Select,
+  Stack,
+} from '@mui/joy';
 import { Form as RouteForm, Link as RouterLink } from 'react-router-dom';
+import { useActionErrors } from '../common/hooks';
 import PageHeading from './PageHeading';
 
 export default function UserRideCreate() {
+  const errors = useActionErrors({ parsed: true });
+
   return (
     <Box method="post" component={RouteForm}>
       <PageHeading>Add new ride</PageHeading>
@@ -15,14 +28,17 @@ export default function UserRideCreate() {
             <Option value="DURATION">Duration</Option>
             <Option value="CONSUMPTION">Consumption</Option>
           </Select>
+          <FormHelperText />
         </FormControl>
-        <FormControl>
+        <FormControl error={Boolean(errors?.date?.errors)}>
           <FormLabel>Date</FormLabel>
           <Input name="date" type="date" required />
+          <FormHelperText>{errors?.date?.errors?.[0].message}</FormHelperText>
         </FormControl>
-        <FormControl>
+        <FormControl error={Boolean(errors?.value?.errors)}>
           <FormLabel>Value</FormLabel>
           <Input name="value" type="number" required />
+          <FormHelperText>{errors?.value?.errors?.[0].message}</FormHelperText>
         </FormControl>
       </Stack>
 

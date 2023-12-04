@@ -30,6 +30,41 @@ describe('<UserRideCreate />', () => {
     });
   });
 
+  test('Correct visibility: errors', async () => {
+    const action = () => ({
+      errors: [
+        {
+          scope: 'REQUEST',
+          message: 'Invalid datetime',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['date'],
+          },
+        },
+        {
+          scope: 'REQUEST',
+          message: 'Number must be greater than or equal to 1',
+          metadata: {
+            pathScope: 'BODY',
+            path: ['value'],
+          },
+        },
+      ],
+    });
+    const invalidDate = '90090-12-12';
+    const invalidValue = '-4';
+    const expectedDateErrorMessage = 'Invalid datetime';
+    const expectedValueErrorMessage = 'Number must be greater than or equal to 1';
+    const { user } = renderWithRouter(<UserRideCreate />, { action });
+
+    await user.type(screen.getByLabelText('Date'), invalidDate);
+    await user.type(screen.getByLabelText('Value'), invalidValue);
+    await user.click(screen.getByRole('button', { name: 'Add new ride' }));
+
+    expect(screen.getByText(expectedDateErrorMessage)).toBeVisible();
+    expect(screen.getByText(expectedValueErrorMessage)).toBeVisible();
+  });
+
   test('Passes correct data to action handler', async () => {
     const { action, dataSpy } = createRouteAction();
     const type = 'Route';
