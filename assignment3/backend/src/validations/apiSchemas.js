@@ -14,3 +14,16 @@ export const rideCreateSchema = z.object({
 export const rideDeleteSchema = z.object({
   params: z.object({ id: z.string() }).strict(),
 });
+
+export const rideTypeCreateSchema = z.object({
+  body: z
+    .object({
+      name: z.string().min(1).max(30),
+      description: z.string().min(1).max(255),
+    })
+    .strict(),
+});
+
+export const rideTypeDeleteSchema = z.object({
+  params: z.object({ id: z.string() }).strict(),
+});

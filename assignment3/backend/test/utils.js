@@ -40,3 +40,12 @@ export async function createRide(mergePayload = {}) {
     ...mergePayload,
   });
 }
+
+export async function createRideType(mergePayload = {}) {
+  return db.rideType.save({
+    name: 'Ride type name',
+    description: 'Description',
+    user: { id: (await getCurrentUser()).id },
+    ...mergePayload,
+  });
+}

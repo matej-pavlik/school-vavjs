@@ -18,7 +18,6 @@ export default function UserRides() {
     <>
       <PageHeading>List of rides</PageHeading>
 
-      {/* TODO order rows by backend according to createdAt */}
       <Table variant="outlined">
         <thead>
           <tr>

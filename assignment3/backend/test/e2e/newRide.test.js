@@ -9,7 +9,6 @@ const { getDocument, queries } = pptrTL;
 const { queryByRole, findByLabelText, findByRole } = queries;
 
 describe('E2E: Add new ride', () => {
-  // TODO custom docker container for e2e tests
   beforeEach(async () => {
     await db.initialize();
     await db.user.delete({ email: 'e2e@example.com' }); // By deleting the user we also cascade delete all his rides
