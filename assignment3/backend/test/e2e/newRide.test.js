@@ -23,14 +23,18 @@ describe('E2E: Add new ride', () => {
   let browser;
 
   test('Correctly adds new ride', async () => {
-    browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox'],
+      env: { LANG: 'en_GB' },
+    });
     const page = await browser.newPage();
     await page.goto(process.env.E2E_APP_URL);
     const document = await getDocument(page);
     const login = 'e2e@example.com';
     const password = 'e2e_password';
     const rideType = 'Duration';
-    const rideDate = '05/23/2023';
+    const rideDate = '23/05/2023';
     const rideValue = '2000';
     const expectedRideRow = '23.05.2023 Duration 2000 N/A Delete';
 
