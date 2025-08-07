@@ -79,7 +79,12 @@ describe('<UserRideCreate />', () => {
         },
       ],
     });
-    const invalidDate = '90090-12-12';
+
+    /**
+     * NOTE: The invalid date value should be more like '90090-12-12', but `<input type="date" />` in happy-dom
+     * doesn't take such values, which is different from a browser behavior.
+     */
+    const invalidDate = '9009-12-12';
     const invalidValue = '-4';
     const expectedDateErrorMessage = 'Invalid datetime';
     const expectedValueErrorMessage = 'Number must be greater than or equal to 1';
